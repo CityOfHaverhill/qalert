@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  haverhill_311_app
+
+  SAM Template for haverhill_311_app
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  PipelineFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: haverhill_311_pipeline/
+      Handler: app.lambda_handler
+      Runtime: python3.6
+      MemorySize: 128
+      Events:
+        CWSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 minute)'
+            Name: 311PipelineSchedule
+            Description: Schedules execution of the Hverhill 311 ETL pipeline
+            Enabled: False
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  PipelineFunction:
+    Description: "311PipelineFunction Lambda Function ARN"
+    Value: !GetAtt PipelineFunction.Arn
+  PipelineFunctionIamRole:
+    Description: "Implicit IAM Role created for 311PipelineFunction function"
+    Value: !GetAtt PipelineFunctionRole.Arn
