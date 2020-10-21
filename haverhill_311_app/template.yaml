@@ -11,23 +11,29 @@ Globals:
     Timeout: 3
 
 Parameters:
-  proxyHost:
+  dbHost:
     Type: String
-    Description: The Endpoint of your RDS Proxy
-  username:
+    Description: The Endpoint of your RDS
+    Default: qalert-db.cnogeb33yj6w.us-east-2.rds.amazonaws.com
+  dbUsername:
     Type: String
     Description: The connection Username for your DB or Cluster
-  db:
+    Default: postgres
+  dbName:
     Type: String
-    Description: The Name of your Database instance
-    Default: mysql
-  port:
+    Description: The Name of your Database
+    Default: qalert_test
+  dbPort:
     Type: String
     Description: Connection port number for your RDS Proxy
-    Default: 3306
-  region:
+    Default: 5432
+  dbRegion:
     Type: String
     Description: The AWS Region for your DB Proxy
+    Default: us-east-2
+  dbPassword:
+    Type: String
+    Description: The AWS RDS dbPassword
 
 Resources:
   PipelineFunction:
@@ -58,6 +64,14 @@ Resources:
                 - rds-db:connect
               Resource:
                 - !Sub arn:aws:rds:us-east-2:361899811679:db-proxy:prx-08c1220060b8b94b7/postgres
+      Environment:
+        Variables:
+          db_host: !Ref dbHost
+          db_user: !Ref dbUsername
+          db_database: !Ref dbName
+          db_port: !Ref dbPort
+          db_region: !Ref dbRegion
+          db_password: !Ref dbPassword
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

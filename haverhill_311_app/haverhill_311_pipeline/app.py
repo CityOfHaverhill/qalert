@@ -1,6 +1,6 @@
-import haverhill_311_app.haverhill_311_pipeline.modules.qalert as qalert
-import haverhill_311_app.haverhill_311_pipeline.modules.sanitizer as sanitizer
-import haverhill_311_app.haverhill_311_pipeline.modules.db as db
+import modules.qalert as qalert
+import modules.sanitizer as sanitizer
+import modules.db as db
 
 
 def lambda_handler(event, context):
@@ -22,3 +22,6 @@ def lambda_handler(event, context):
     # data = qalert.pull()
     # sanitizer.sanitize(data)
     # db.insert(processed_data)
+    with db.QAlertDB() as qalert_db:
+        print("Successfull db connection")
+    print("hello world")

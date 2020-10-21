@@ -3,20 +3,8 @@
 import os
 from typing import List, Optional
 
-import boto3
 import psycopg2 as psql
 import psycopg2.extensions as psql_ext
-
-
-def generate_db_auth_token(host: str, port: str, user: str, region: str):
-    client = boto3.client('rds')
-    token = client.generate_db_auth_token(
-        DBHostname=host,
-        Port=port,
-        DBUsername=user,
-        Region=region
-    )
-    return token
 
 
 class QAlertDB:
@@ -34,8 +22,7 @@ class QAlertDB:
         self.port: int = port or os.environ['db_port']
         self.user: str = user or os.environ['db_user']
         self.database: str = database or os.environ['db_database']
-        self.password: Optional[str] = password or os.environ['db_password']
-        self.region: Optional[str] = region or os.environ['db_region']
+        self.password: str = password or os.environ.get('db_password')
 
     def insert(self, record: dict):
         """Insert a QAlert request record into the qalert_requests table.
@@ -48,7 +35,7 @@ class QAlertDB:
         with self.conn.cursor() as cur:
             insert_statement = f'insert into {self.QALERT_TABLE} (%s) values %s'
             insert_statement = cur.mogrify(insert_statement, (psql_ext.AsIs(','.join(columns)), tuple(values)))
-            cur.execute()
+            cur.execute(insert_statement)
 
     def insert_many(self, records: List[dict]):
         """Insert multiple QAlert request records into the qalert_requests table.
@@ -73,13 +60,6 @@ class QAlertDB:
 
     def _connect(self):
         """Establish connection with psql db."""
-        if not self.password:
-            self.password = generate_db_auth_token(
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                region=self.region
-            )
         self.conn = psql.connect(
             host=self.host,
             port=self.port,
