@@ -10,6 +10,25 @@ Globals:
   Function:
     Timeout: 3
 
+Parameters:
+  proxyHost:
+    Type: String
+    Description: The Endpoint of your RDS Proxy
+  username:
+    Type: String
+    Description: The connection Username for your DB or Cluster
+  db:
+    Type: String
+    Description: The Name of your Database instance
+    Default: mysql
+  port:
+    Type: String
+    Description: Connection port number for your RDS Proxy
+    Default: 3306
+  region:
+    Type: String
+    Description: The AWS Region for your DB Proxy
+
 Resources:
   PipelineFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -25,7 +44,20 @@ Resources:
             Schedule: 'rate(1 minute)'
             Name: 311PipelineSchedule
             Description: Schedules execution of the Hverhill 311 ETL pipeline
-            Enabled: False
+            Enabled: True
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0b419d108348c329b
+        SubnetIds:
+          - subnet-0408d2b368d189bfc
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+              Resource:
+                - !Sub arn:aws:rds:us-east-2:361899811679:db-proxy:prx-08c1220060b8b94b7/postgres
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
