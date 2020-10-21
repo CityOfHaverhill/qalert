@@ -2,13 +2,13 @@
 
 import os
 import requests
-import urllib.request
 import json
 import settings
 
 URL = settings.URL
 API_KEY = settings.API_KEY
 TEST_URL = settings.TEST_URL
+
 
 def pull():
     data = []
@@ -31,12 +31,16 @@ def pull():
         print(e)
         raise
 
+
 def pull_data_test():
     data = []
     try:
-        test_response = urllib.request.urlopen(TEST_URL)
-        data = json.loads(test_response.read().decode("utf-8"))
+        payload = {}
+        headers = {}
+        response = requests.request(
+            "GET", TEST_URL, headers=headers, data=payload)
+        data = response.json()
+        return data
+
     except Exception as e:
         print(e)
-
-    return data
