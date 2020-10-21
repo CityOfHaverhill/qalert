@@ -11,6 +11,9 @@ TEST_URL = settings.TEST_URL
 
 
 def pull():
+    """
+    Makes a GET request to fetch 311 Data from QAlert API and returns the data.
+    """
     data = []
     try:
         url = URL + "?key=" + API_KEY
@@ -33,6 +36,9 @@ def pull():
 
 
 def pull_data_test():
+    """
+    Makes an API call to sample test data of 311 requests from S3 bucket.
+    """
     data = []
     try:
         payload = {}
