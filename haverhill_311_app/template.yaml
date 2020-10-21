@@ -10,6 +10,31 @@ Globals:
   Function:
     Timeout: 3
 
+Parameters:
+  dbHost:
+    Type: String
+    Description: The Endpoint of your RDS
+    Default: qalert-db.cnogeb33yj6w.us-east-2.rds.amazonaws.com
+  dbUsername:
+    Type: String
+    Description: The connection Username for your DB or Cluster
+    Default: postgres
+  dbName:
+    Type: String
+    Description: The Name of your Database
+    Default: qalert_test
+  dbPort:
+    Type: String
+    Description: Connection port number for your RDS Proxy
+    Default: 5432
+  dbRegion:
+    Type: String
+    Description: The AWS Region for your DB Proxy
+    Default: us-east-2
+  dbPassword:
+    Type: String
+    Description: The AWS RDS dbPassword
+
 Resources:
   PipelineFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -25,7 +50,28 @@ Resources:
             Schedule: 'rate(1 minute)'
             Name: 311PipelineSchedule
             Description: Schedules execution of the Hverhill 311 ETL pipeline
-            Enabled: False
+            Enabled: True
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0b419d108348c329b
+        SubnetIds:
+          - subnet-0408d2b368d189bfc
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+              Resource:
+                - !Sub arn:aws:rds:us-east-2:361899811679:db-proxy:prx-08c1220060b8b94b7/postgres
+      Environment:
+        Variables:
+          db_host: !Ref dbHost
+          db_user: !Ref dbUsername
+          db_database: !Ref dbName
+          db_port: !Ref dbPort
+          db_region: !Ref dbRegion
+          db_password: !Ref dbPassword
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

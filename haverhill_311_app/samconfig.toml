@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "haverhill-311-stack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1cdddoijwrjry"
+s3_prefix = "haverhill-311-stack"
+region = "us-east-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
