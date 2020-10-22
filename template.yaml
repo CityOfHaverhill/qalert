@@ -39,8 +39,8 @@ Resources:
   PipelineFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: haverhill_311_pipeline/
-      Handler: app.lambda_handler
+      CodeUri: .
+      Handler: haverhill_311_function.app.lambda_handler
       Runtime: python3.6
       MemorySize: 128
       Events:

@@ -1,9 +1,7 @@
 """The QAlert module is a wrapper client around the QAlert API for pulling 311 request data."""
+from . import settings
 
-import os
 import requests
-import json
-import settings
 
 URL = settings.URL
 API_KEY = settings.API_KEY

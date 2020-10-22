@@ -1,6 +1,4 @@
-from haverhill_311_app.haverhill_311_pipeline.modules import db
-
-import pytest
+from haverhill_311_function.modules import db
 
 
 def test_init():
@@ -18,8 +16,4 @@ def test_init():
     assert qalert_db.port == 5000
     assert qalert_db.user == 'user'
     assert qalert_db.password == 'password'
-    assert qalert_db.region == 'region'
     assert qalert_db.database == 'database'
-
-if __name__ == '__main__':
-    test_init()
