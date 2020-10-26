@@ -35,7 +35,6 @@ class QAlertDB:
         with self.conn.cursor() as cur:
             insert_statement = f'insert into {self.QALERT_TABLE} (%s) values %s'
             insert_statement = cur.mogrify(insert_statement, (psql_ext.AsIs(','.join(columns)), tuple(values)))
-            print(insert_statement)
             cur.execute(insert_statement)
             self.conn.commit()
 
