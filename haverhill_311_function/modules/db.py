@@ -1,10 +1,47 @@
 """The database module is the interface to PostgreSQL db with 311 request data.
 """
 import os
-from typing import List, Optional
+from typing import List
 
-import psycopg2 as psql
-import psycopg2.extensions as psql_ext
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, DateTime, Text, Float
+from sqlalchemy.orm import sessionmaker
+from geoalchemy2 import Geometry
+from geoalchemy2.shape import from_shape
+from geoalchemy2.types import WKBElement
+from shapely.geometry import Point
+
+NAD_83 = 4269
+Base = declarative_base()
+
+
+class QAlertRequest(Base):
+    """Sqlalchemy orm model for the qalert requests table"""
+    __tablename__ = 'qalert_requests_geo'
+    id = Column(Integer, primary_key=True)
+    status = Column(Integer)
+    create_date = Column(DateTime)
+    create_date_unix = Column(Integer)
+    last_action = Column(DateTime)
+    last_action_unix = Column(Integer)
+    type_id = Column(Integer)
+    type_name = Column(Text)
+    comments = Column(Text)
+    street_num = Column(Text)
+    street_name = Column(Text)
+    cross_name = Column(Text)
+    city_name = Column(Text)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+
+    def construct_point(self) -> WKBElement:
+        return from_shape(
+            shape=Point(self.latitude, self.longitude),
+            srid=NAD_83
+        )
+
+    point = Column(Geometry(geometry_type='POINT', srid=NAD_83), nullable=False, default=construct_point())
 
 
 class QAlertDB:
@@ -12,69 +49,79 @@ class QAlertDB:
     
         Example:
 
+        request_1 = QAlertRequest(id=1, latitude=1.1, longitude=1.1)
+        request_2 = QAlertRequest(id=2, latitude=1.1, longitude=1.1)
+        requests = [request_1, request_2]
         with QAlertDB() as db:
-            db.insert(record)
-    """
-    QALERT_TABLE = "qalert_requests"
+            # save individual request object
+            db.save(request_1)
 
-    def __init__(self, host=None, port=None, user=None, password=None, region=None, database=None):
+            # save a list of request objects
+            db.save_many(requests, commit=True)
+
+            # delete a request object
+            db.delete(request_2)
+
+            # modify and save a request object
+            request_1.type_name = "trash pickup"
+            db.save(request_1)
+    """
+
+    def __init__(self, host=None, port=None, user=None, password=None, database=None):
         self.host: str = host or os.environ['db_host']
         self.port: int = port or os.environ['db_port']
         self.user: str = user or os.environ['db_user']
         self.database: str = database or os.environ['db_database']
         self.password: str = password or os.environ.get('db_password')
 
-    def insert(self, record: dict):
-        """Insert a QAlert request record into the qalert_requests table.
-        
-        Keyword arguments:
-        record -- a QAlert request record to insert
-        """
-        columns = record.keys()
-        values = [record[column] for column in columns]
-        with self.conn.cursor() as cur:
-            insert_statement = f'insert into {self.QALERT_TABLE} (%s) values %s'
-            insert_statement = cur.mogrify(insert_statement, (psql_ext.AsIs(','.join(columns)), tuple(values)))
-            cur.execute(insert_statement)
-            self.conn.commit()
+    def save(self, request: QAlertRequest, commit=True):
+        self.session.add(request)
+        self.session.flush()
+        if commit:
+            self.commit()
 
-    def insert_many(self, records: List[dict]):
-        """Insert multiple QAlert request records into the qalert_requests table.
-        
-        Keyword arguments:
-        records -- a list of QAlert request record to insert
-        """
-        for record in records:
-            self.insert(record=record)
+    def save_many(self, requests: List[QAlertRequest], commit=True):
+        for request in requests:
+            self.save(request, commit=False)
+            self.commit()
 
-    def get(self, record_id: str) -> Optional[tuple]:
-        """Retreive a QAlert request record from qalert_requests table with given id.
-        
-        Keyword arguments:
-        record_id -- id of the QAlert request record to retreive
-        """
-        select_statement = f'select * from {self.QALERT_TABLE} where id = {record_id};'
-        with self.conn.cursor() as cur:
-            cur.execute(select_statement)
-            record = cur.fetchone()
-        return record
+    def commit(self):
+        self.session.commit()
+    
+    def get(self, request_id: int, raise_exception=False):
+        request = self.session.query(QAlertRequest).get(request_id)
+        if request is None and raise_exception:
+            raise Exception("QAlert request not found.")
+        return request
+    
+    def find_by_props(self, prop_dict: dict) -> list:
+        q = self.session.query(QAlertRequest)
+        for attr, value in prop_dict.items():
+            q = q.filter(getattr(QAlertRequest, attr) == value)
+        return q.all()
+
+    def delete(self, request: QAlertRequest, commit=True):
+        self.session.delete(request)
+        self.session.flush()
+        if commit:
+            self.commit()
 
     def _connect(self):
         """Establish connection with psql db."""
-        self.conn = psql.connect(
-            host=self.host,
-            port=self.port,
-            database=self.database,
-            user=self.user,
-            password=self.password
+        self.engine = create_engine(
+            f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}', 
+            echo=True
         )
+        session_maker = sessionmaker(bind=self.engine)
+        self.session = session_maker()
 
     def _disconnect(self):
         """Kill connection with psql db."""
-        self.conn.close()
+        self.session.close()
 
     def __enter__(self):
         self._connect()
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._disconnect()

@@ -1,8 +1,10 @@
-from .modules import db
-from .modules import qalert
+from typing import List
+
+from modules import db
+from modules import qalert
 
 
-def lambda_handler(event, context):
+def lambda_handler():
     """Sample pure Lambda function
 
     Parameters
@@ -19,16 +21,6 @@ def lambda_handler(event, context):
 
     """
     data = qalert.pull_data_test()
-    processed_data = []
-    for record in data:
-        processed_record = {
-            'id': record['id'],
-            'latitude': record['latitude'],
-            'longitude': record['longitude'],
-            'typeId': record['typeId'],
-            'typeName': record['typeName'] 
-        }
-        processed_data.append(processed_record)
-    qalert_db = db.QAlertDB()
-    with qalert_db:
-        qalert_db.insert_many(records=processed_data)
+    qalert_requests: List[db.QAlertRequest] = []
+    with db.QAlertDB() as qalert_db:
+        qalert_db.save_many(requests=qalert_requests)

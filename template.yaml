@@ -27,10 +27,6 @@ Parameters:
     Type: String
     Description: Connection port number for your RDS Proxy
     Default: 5432
-  dbRegion:
-    Type: String
-    Description: The AWS Region for your DB Proxy
-    Default: us-east-2
   dbPassword:
     Type: String
     Description: The AWS RDS dbPassword
@@ -76,7 +72,6 @@ Resources:
           db_user: !Ref dbUsername
           db_database: !Ref dbName
           db_port: !Ref dbPort
-          db_region: !Ref dbRegion
           db_password: !Ref dbPassword
           URL: !Ref qalertUrl
           TEST_URL: !Ref qalertTestUrl
