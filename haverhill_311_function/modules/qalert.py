@@ -20,17 +20,10 @@ def pull():
         response = requests.request(
             "GET", url, headers=headers, data=payload
         )
-
-    except:
-        print("Network error.")
-
-    try:
         data = response.json()
         return data
-
-    except Exception as e:
-        print(e)
-        raise
+    except:
+        print("Network error.")
 
 
 def pull_data_test():

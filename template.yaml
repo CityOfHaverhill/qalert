@@ -34,6 +34,12 @@ Parameters:
   dbPassword:
     Type: String
     Description: The AWS RDS dbPassword
+  qalertUrl:
+    Type: String
+  qalertTestUrl:
+    Type: String
+  qalertApiKey:
+    Type: String
 
 Resources:
   PipelineFunction:
@@ -72,6 +78,10 @@ Resources:
           db_port: !Ref dbPort
           db_region: !Ref dbRegion
           db_password: !Ref dbPassword
+          URL: !Ref qalertUrl
+          TEST_URL: !Ref qalertTestUrl
+          API_KEY: !Ref qalertApiKey
+      Timeout: 30
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

@@ -36,6 +36,7 @@ class QAlertDB:
             insert_statement = f'insert into {self.QALERT_TABLE} (%s) values %s'
             insert_statement = cur.mogrify(insert_statement, (psql_ext.AsIs(','.join(columns)), tuple(values)))
             cur.execute(insert_statement)
+            self.conn.commit()
 
     def insert_many(self, records: List[dict]):
         """Insert multiple QAlert request records into the qalert_requests table.
