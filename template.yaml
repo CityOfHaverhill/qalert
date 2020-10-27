@@ -44,7 +44,7 @@ Resources:
       CodeUri: .
       Handler: haverhill_311_function.app.lambda_handler
       Runtime: python3.6
-      MemorySize: 128
+      MemorySize: 256
       Events:
         CWSchedule:
           Type: Schedule
