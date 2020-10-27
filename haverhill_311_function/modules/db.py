@@ -85,6 +85,7 @@ class QAlertDB:
     def save_many(self, requests: List[QAlertRequest], commit=True):
         for request in requests:
             self.save(request, commit=False)
+        if commit:
             self.commit()
 
     def commit(self):
