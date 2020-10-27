@@ -16,6 +16,15 @@ NAD_83 = 4269
 Base = declarative_base()
 
 
+def construct_point(context) -> WKBElement:
+    latitude = context.get_current_parameters()['latitude']
+    longitude = context.get_current_parameters()['longitude']
+    return from_shape(
+        shape=Point(latitude, longitude),
+        srid=NAD_83
+    )
+
+
 class QAlertRequest(Base):
     """Sqlalchemy orm model for the qalert requests table"""
     __tablename__ = 'qalert_requests_geo'
@@ -34,14 +43,7 @@ class QAlertRequest(Base):
     city_name = Column(Text)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-
-    def construct_point(self) -> WKBElement:
-        return from_shape(
-            shape=Point(self.latitude, self.longitude),
-            srid=NAD_83
-        )
-
-    point = Column(Geometry(geometry_type='POINT', srid=NAD_83), nullable=False, default=construct_point())
+    point = Column(Geometry(geometry_type='POINT', srid=NAD_83), nullable=False, default=construct_point)
 
 
 class QAlertDB:
