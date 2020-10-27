@@ -1,10 +1,10 @@
 from typing import List
 
-from modules import db
-from modules import qalert
+from .modules import db
+from .modules import qalert
 
 
-def lambda_handler():
+def lambda_handler(event, context):
     """Sample pure Lambda function
 
     Parameters
