@@ -27,7 +27,7 @@ def construct_point(context) -> WKBElement:
 
 class QAlertRequest(Base):
     """Sqlalchemy orm model for the qalert requests table"""
-    __tablename__ = 'qalert_requests_geo'
+    __tablename__ = 'qalert_requests'
     id = Column(Integer, primary_key=True)
     status = Column(Integer)
     create_date = Column(DateTime)
@@ -77,6 +77,8 @@ class QAlertDB:
         self.password: str = password or os.environ.get('db_password')
 
     def save(self, request: QAlertRequest, commit=True):
+        if self.get(request_id=request.id):
+            return
         self.session.add(request)
         self.session.flush()
         if commit:
