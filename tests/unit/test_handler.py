@@ -10,4 +10,4 @@ def scheduler_event():
 
 
 def test_lambda_handler(scheduler_event, mocker):
-    app.lambda_handler(scheduler_event, "")
+    pass

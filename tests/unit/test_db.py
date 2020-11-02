@@ -7,7 +7,6 @@ def test_init():
         port=5000,
         user='user',
         password='password',
-        region='region',
         database='database'
     )
 
