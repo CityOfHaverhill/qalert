@@ -13,6 +13,7 @@ def qalert_db():
         database='qalert_test'
     )
 
+
 def test_init(qalert_db):
     assert getattr(qalert_db, 'session', None) is None
     assert qalert_db.host == 'localhost'
@@ -21,9 +22,11 @@ def test_init(qalert_db):
     assert qalert_db.password == 'docker'
     assert qalert_db.database == 'qalert_test'
 
+
 def test_connection(qalert_db):
     with qalert_db:
         assert(qalert_db.session is not None)
+
 
 def test_save(qalert_db):
     qalert_request = db.QAlertRequest(
@@ -35,6 +38,7 @@ def test_save(qalert_db):
         qalert_db.save(qalert_request)
         saved_qalert_request = qalert_db.get(request_id=1)
         assert saved_qalert_request == qalert_request
+
 
 def test_save_many(qalert_db):
     qalert_requests = [
@@ -59,4 +63,3 @@ def test_save_many(qalert_db):
         assert qalert_db.get(request_id=1) is not None
         assert qalert_db.get(request_id=2) is not None
         assert qalert_db.get(request_id=3) is not None
-
