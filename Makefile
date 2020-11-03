@@ -10,5 +10,6 @@ run-function: start-db
 	sam build
 	sam local invoke --env-vars tests/local_config.json --docker-network host
 
-unit-test:
+unit-test: start-db
+	./tests/wait_for_postgres.sh
 	pytest tests/

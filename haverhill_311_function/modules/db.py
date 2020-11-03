@@ -76,6 +76,12 @@ class QAlertDB:
         self.database: str = database or os.environ['db_database']
         self.password: str = password or os.environ.get('db_password')
 
+        self.engine = create_engine(
+            f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}', 
+            echo=True
+        )
+        self.session_maker = sessionmaker(bind=self.engine)
+
     def save(self, request: QAlertRequest, commit=True):
         if self.get(request_id=request.id):
             return
@@ -113,12 +119,7 @@ class QAlertDB:
 
     def _connect(self):
         """Establish connection with psql db."""
-        self.engine = create_engine(
-            f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}', 
-            echo=True
-        )
-        session_maker = sessionmaker(bind=self.engine)
-        self.session = session_maker()
+        self.session = self.session_maker()
 
     def _disconnect(self):
         """Kill connection with psql db."""
