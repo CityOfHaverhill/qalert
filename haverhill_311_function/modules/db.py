@@ -1,7 +1,7 @@
 """The database module is the interface to PostgreSQL db with 311 request data.
 """
 import os
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -76,6 +76,12 @@ class QAlertDB:
         self.database: str = database or os.environ['db_database']
         self.password: str = password or os.environ.get('db_password')
 
+        self.engine = create_engine(
+            f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}', 
+            echo=True
+        )
+        self.session_maker = sessionmaker(bind=self.engine)
+
     def save(self, request: QAlertRequest, commit=True):
         if self.get(request_id=request.id):
             return
@@ -93,13 +99,13 @@ class QAlertDB:
     def commit(self):
         self.session.commit()
     
-    def get(self, request_id: int, raise_exception=False):
+    def get(self, request_id: int, raise_exception=False) -> Optional[QAlertRequest]:
         request = self.session.query(QAlertRequest).get(request_id)
         if request is None and raise_exception:
             raise Exception("QAlert request not found.")
         return request
     
-    def find_by_props(self, prop_dict: dict) -> list:
+    def find_by_props(self, prop_dict: dict) -> List[QAlertRequest]:
         q = self.session.query(QAlertRequest)
         for attr, value in prop_dict.items():
             q = q.filter(getattr(QAlertRequest, attr) == value)
@@ -113,12 +119,7 @@ class QAlertDB:
 
     def _connect(self):
         """Establish connection with psql db."""
-        self.engine = create_engine(
-            f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}', 
-            echo=True
-        )
-        session_maker = sessionmaker(bind=self.engine)
-        self.session = session_maker()
+        self.session = self.session_maker()
 
     def _disconnect(self):
         """Kill connection with psql db."""
