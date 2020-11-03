@@ -1,10 +1,9 @@
-from typing import List
 import os
 
 os.environ.update({
     "URL": "blah",
     "API_KEY": "blah",
-    "TEST_URL": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",
+    "TEST_URL": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",  # noqa: E501
     "db_host": "localhost",
     "db_port": "5432",
     "db_user": "docker",
@@ -12,10 +11,10 @@ os.environ.update({
     "db_database": "qalert_test"
 })
 
-from haverhill_311_function import app
-from haverhill_311_function.modules import db
+from haverhill_311_function import app  # noqa: E402
+from haverhill_311_function.modules import db  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
 
 
 @pytest.fixture()
@@ -33,6 +32,7 @@ def qalert_db():
         password='docker',
         database='qalert_test'
     )
+
 
 def test_lambda_handler(scheduler_event, qalert_db):
     # clean qalert requests table

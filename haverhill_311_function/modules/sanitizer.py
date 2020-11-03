@@ -33,7 +33,9 @@ def sanitize(qalert_data: List[dict]) -> List[QAlertRequest]:
     qalert_requests = []
     for qalert_request_data in qalert_data:
         qalert_request_schema = QAlertRequestSchema()
-        qalert_request_validated = qalert_request_schema.load(qalert_request_data)
+        qalert_request_validated = qalert_request_schema.load(
+            qalert_request_data
+        )
         qalert_request = QAlertRequest(
             id=qalert_request_validated.get('id'),
             status=qalert_request_validated.get('status'),

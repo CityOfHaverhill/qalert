@@ -18,4 +18,7 @@ integration-tests: start-db
 	./tests/wait_for_postgres.sh
 	pytest tests/integration
 
+lint:
+	flake8 haverhill_311_function/ tests/ 
+
 all-tests: unit-tests integration-tests

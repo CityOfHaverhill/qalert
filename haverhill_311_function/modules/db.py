@@ -43,12 +43,19 @@ class QAlertRequest(Base):
     city_name = Column(Text)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-    point = Column(Geometry(geometry_type='POINT', srid=NAD_83), nullable=False, default=construct_point)
+    point = Column(
+        Geometry(
+            geometry_type='POINT',
+            srid=NAD_83
+        ),
+        nullable=False,
+        default=construct_point
+    )
 
 
 class QAlertDB:
     """QAlertDB class handles all database related operations.
-    
+
         Example:
 
         request_1 = QAlertRequest(id=1, latitude=1.1, longitude=1.1)
@@ -68,16 +75,32 @@ class QAlertDB:
             request_1.type_name = "trash pickup"
             db.save(request_1)
     """
+    CONNECTION_STRING = "postgresql://{user}:{password}@{host}:{port}/{database}".format  # noqa: E501
 
-    def __init__(self, host=None, port=None, user=None, password=None, database=None):
-        self.host: str = host or os.environ['db_host']
-        self.port: int = port or os.environ['db_port']
-        self.user: str = user or os.environ['db_user']
-        self.database: str = database or os.environ['db_database']
-        self.password: str = password or os.environ.get('db_password')
+    def __init__(self, **kwargs):
+        self._load_params(**kwargs)
+        self._prepare_connection()
 
+    def _load_params(self, **kwargs):
+        self.host: str = kwargs.get('host') or os.environ['db_host']
+        self.port: int = kwargs.get('port') or os.environ['db_port']
+        self.user: str = kwargs.get('user') or os.environ['db_user']
+        self.database: str = (
+            kwargs.get('database') or os.environ['db_database']
+        )
+        self.password: str = (
+            kwargs.get('password') or os.environ.get('db_password')
+        )
+
+    def _prepare_connection(self):
         self.engine = create_engine(
-            f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}', 
+            self.CONNECTION_STRING(
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port,
+                database=self.database
+            ),
             echo=True
         )
         self.session_maker = sessionmaker(bind=self.engine)
@@ -98,13 +121,13 @@ class QAlertDB:
 
     def commit(self):
         self.session.commit()
-    
-    def get(self, request_id: int, raise_exception=False) -> Optional[QAlertRequest]:
+
+    def get(self, request_id: int, raise_exception=False) -> Optional[QAlertRequest]:  # noqa: E501
         request = self.session.query(QAlertRequest).get(request_id)
         if request is None and raise_exception:
             raise Exception("QAlert request not found.")
         return request
-    
+
     def find_by_props(self, prop_dict: dict) -> List[QAlertRequest]:
         q = self.session.query(QAlertRequest)
         for attr, value in prop_dict.items():
