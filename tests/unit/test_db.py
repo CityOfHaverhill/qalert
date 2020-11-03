@@ -33,3 +33,30 @@ def test_save(qalert_db):
     )
     with qalert_db:
         qalert_db.save(qalert_request)
+        saved_qalert_request = qalert_db.get(request_id=1)
+        assert saved_qalert_request == qalert_request
+
+def test_save_many(qalert_db):
+    qalert_requests = [
+        db.QAlertRequest(
+            id=1,
+            latitude=1.1,
+            longitude=1.1
+        ),
+        db.QAlertRequest(
+            id=2,
+            latitude=1.1,
+            longitude=1.1
+        ),
+        db.QAlertRequest(
+            id=3,
+            latitude=1.1,
+            longitude=1.1
+        ),
+    ]
+    with qalert_db:
+        qalert_db.save_many(qalert_requests)
+        assert qalert_db.get(request_id=1) is not None
+        assert qalert_db.get(request_id=2) is not None
+        assert qalert_db.get(request_id=3) is not None
+
