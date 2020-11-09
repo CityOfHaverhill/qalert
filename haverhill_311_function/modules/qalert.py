@@ -24,7 +24,6 @@ def pull():
 
         if create_date_min is not None:
             url += "&createDateMin=" + create_date_min
-            
         payload = {}
         headers = {}
         response = requests.request(

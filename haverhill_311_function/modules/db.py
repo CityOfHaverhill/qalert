@@ -105,10 +105,10 @@ class QAlertAuditDB:
         if request is None and raise_exception:
             raise Exception("QAlert request not found.")
         return request
-    
+
     def get_latest_request(self, raise_exception=False) -> QAlertAudit:
-        """ SQLAlchemy function to get latest requests of audit (based on ordering of ID) """
-        request = self.session.query(QAlertAudit).order_by(QAlertAudit.id.desc()).first()
+        request = self.session.query(QAlertAudit).order_by(
+            QAlertAudit.id.desc()).first()
         if request is None and raise_exception:
             raise Exception("QAlert request not found.")
         return request
