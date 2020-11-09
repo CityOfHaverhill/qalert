@@ -17,9 +17,14 @@ def pull():
     try:
         url = URL + "?key=" + API_KEY
         create_date_min = None
-        create_date_min = None #Function to fetch the earliest date
+        latest_request = db.QAlertAuditDB().get_latest_request()
+
+        if latest_request is not None:
+            create_date_min = latest_request.create_date
+
         if create_date_min is not None:
             url += "&createDateMin=" + create_date_min
+            
         payload = {}
         headers = {}
         response = requests.request(
