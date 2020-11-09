@@ -21,4 +21,6 @@ def lambda_handler(event, context):
         qalert_data=data
     )
     with db.QAlertDB() as qalert_db:
+        latest_date = qalert_requests[0].create_date
+        # latest_date should be saved on another Table/Schema as a cache
         qalert_db.save_many(requests=qalert_requests)

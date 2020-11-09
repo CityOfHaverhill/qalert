@@ -1,5 +1,6 @@
 """The QAlert module is a wrapper client around the QAlert API."""
 from . import settings
+from . import db
 
 import requests
 
@@ -15,6 +16,10 @@ def pull():
     data = []
     try:
         url = URL + "?key=" + API_KEY
+        create_date_min = None
+        create_date_min = None #Function to fetch the earliest date
+        if create_date_min is not None:
+            url += "&createDateMin=" + create_date_min
         payload = {}
         headers = {}
         response = requests.request(
