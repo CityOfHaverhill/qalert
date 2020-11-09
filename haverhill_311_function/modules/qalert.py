@@ -1,4 +1,4 @@
-"""The QAlert module is a wrapper client around the QAlert API for pulling 311 request data."""
+"""The QAlert module is a wrapper client around the QAlert API."""
 from . import settings
 
 import requests
@@ -22,8 +22,8 @@ def pull():
         )
         data = response.json()
         return data
-    except:
-        print("Network error.")
+    except Exception as exc:
+        print(f"Network error: {exc}.")
 
 
 def pull_data_test():
