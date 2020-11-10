@@ -1,7 +1,8 @@
 """The database module is the interface to PostgreSQL db with 311 request data.
 """
-import os
 from typing import List, Optional
+
+from . import settings
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -82,14 +83,14 @@ class QAlertDB:
         self._prepare_connection()
 
     def _load_params(self, **kwargs):
-        self.host: str = kwargs.get('host') or os.environ['db_host']
-        self.port: int = kwargs.get('port') or os.environ['db_port']
-        self.user: str = kwargs.get('user') or os.environ['db_user']
-        self.database: str = (
-            kwargs.get('database') or os.environ['db_database']
-        )
+        self.host: str = kwargs.get('host') or settings.DB_HOST
+        self.port: int = kwargs.get('port') or settings.DB_PORT
+        self.user: str = kwargs.get('user') or settings.DB_USER
         self.password: str = (
-            kwargs.get('password') or os.environ.get('db_password')
+            kwargs.get('password') or settings.DB_PASSWORD
+        )
+        self.database: str = (
+            kwargs.get('database') or settings.DB_DATABASE
         )
 
     def _prepare_connection(self):
