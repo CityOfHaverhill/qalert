@@ -7,8 +7,8 @@ load_dotenv(find_dotenv())
 
 # QAlert settings
 QALERT_REQUEST_ENDPOINT = os.environ.get("QALERT_REQUEST_ENDPOINT")
+QALERT_REQUEST_ENDPOINT_TEST = os.environ.get("QALERT_REQUEST_ENDPOINT_TEST")
 QALERT_API_KEY = os.environ.get("QALERT_API_KEY")
-QALERT_REQUEST_ENDPOINT_TEST = os.environ.get("TEST_URL")
 
 # Database settings
 DB_HOST = os.environ.get("DB_HOST")
