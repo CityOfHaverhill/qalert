@@ -11,7 +11,10 @@ def pull():
     if settings.TEST:
         url = settings.QALERT_REQUEST_ENDPOINT_TEST
     else:
-        url = settings.QALERT_REQUEST_ENDPOINT + "?key=" + settings.QALERT_API_KEY
+        url = "{endpoint}?key={api_key}".format(
+            endpoint=settings.QALERT_REQUEST_ENDPOINT,
+            api_key=settings.QALERT_API_KEY
+        )
     payload = {}
     headers = {}
     response = requests.get(url, headers=headers, data=payload)
