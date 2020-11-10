@@ -3,7 +3,7 @@ import os
 os.environ.update({
     "QALERT_REQUEST_ENDPOINT": "blah",
     "QALERT_API_KEY": "blah",
-    "QALERT_REQUEST_ENDPOINT_TEST": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",
+    "QALERT_REQUEST_ENDPOINT_TEST": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",  # noqa: E501
     "DB_HOST": "localhost",
     "DB_PORT": "5432",
     "DB_USER": "docker",
