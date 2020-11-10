@@ -1,6 +1,5 @@
 """The database module is the interface to PostgreSQL db with 311 request data.
 """
-from haverhill_311_function.modules.settings import TEST
 from typing import List, Optional
 
 from . import settings
