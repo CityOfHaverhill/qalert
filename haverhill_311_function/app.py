@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     context: object, required
         Lambda Context runtime methods and attributes
     """
-    data = qalert.pull_data_test()
+    data = qalert.pull()
     if data != []:
         latest_date = data[0]["createDate"]
         qalert_requests: List[db.QAlertRequest] = sanitizer.sanitize(

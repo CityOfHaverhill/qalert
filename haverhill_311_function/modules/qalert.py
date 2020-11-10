@@ -25,7 +25,7 @@ def pull():
         if create_date_min is not None:
             url += "&createDateMin=" + create_date_min
         payload = {}
-        headers = {}
+        headers = {'User-Agent': 'Custom'}
         response = requests.request(
             "GET", url, headers=headers, data=payload
         )
