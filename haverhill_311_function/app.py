@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     context: object, required
         Lambda Context runtime methods and attributes
     """
-    data = qalert.pull_data_test()
+    data = qalert.pull()
     qalert_requests: List[db.QAlertRequest] = sanitizer.sanitize(
         qalert_data=data
     )

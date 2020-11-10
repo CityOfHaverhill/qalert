@@ -1,12 +1,13 @@
 {
     "PipelineFunction": {
-        "URL": "blah",
-        "API_KEY": "blah",
-        "TEST_URL": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",
-        "db_host": "localhost",
-        "db_port": 5432,
-        "db_user": "docker",
-        "db_password": "docker",
-        "db_database": "qalert_test"
+        "QALERT_REQUEST_ENDPOINT": "blah",
+        "QALERT_API_KEY": "blah",
+        "QALERT_REQUEST_ENDPOINT_TEST": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",
+        "DB_HOST": "localhost",
+        "DB_PORT": 5432,
+        "DB_USER": "docker",
+        "DB_PASSWORD": "docker",
+        "DB_DATABASE": "qalert_test",
+        "TEST": "true"
     }
 }
