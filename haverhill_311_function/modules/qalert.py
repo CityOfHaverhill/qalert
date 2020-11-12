@@ -17,7 +17,8 @@ def pull():
     try:
         url = URL + "?key=" + API_KEY
         create_date_min = None
-        latest_request = db.QAlertAuditDB().get_latest_request()
+        with db.QAlertAuditDB() as audit_db:
+            latest_request = db.get_latest_request()
 
         if latest_request is not None:
             create_date_min = latest_request.create_date
