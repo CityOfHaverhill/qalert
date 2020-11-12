@@ -2,9 +2,9 @@ import os
 
 os.environ['TEST'] = '1'
 
-from haverhill_311_function.modules import db
+from haverhill_311_function.modules import db  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
 
 
 @pytest.fixture
