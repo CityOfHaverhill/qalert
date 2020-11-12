@@ -1,0 +1,32 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: cd
+
+on:
+ push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+    - name: Build
+      run: |
+        sam build --use-container
+    - name: Deploy
+      run: |
+        sam deploy \
+        --stack-name haverhill-311-stack \
+        --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-1cdddoijwrjry \
+        --s3-prefix haverhill-311-stack \
+        --no-confirm-changeset \
+        --parameter-overrides ${{ secrets.LAMBDA_PARAMETERS }} \
+        --region us-east-2
