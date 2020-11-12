@@ -1,3 +1,7 @@
+import os
+
+os.environ['TEST'] = '1'
+
 from haverhill_311_function.modules import db
 
 import pytest
