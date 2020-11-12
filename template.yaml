@@ -53,7 +53,7 @@ Resources:
         CWSchedule:
           Type: Schedule
           Properties:
-            Schedule: 'rate(1 minute)'
+            Schedule: 'rate(2 minutes)'
             Name: 311PipelineSchedule
             Description: Schedules execution of the Hverhill 311 ETL pipeline
             Enabled: True
