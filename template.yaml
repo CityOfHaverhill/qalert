@@ -37,7 +37,7 @@ Parameters:
   qalertApiKey:
     Type: String
   isTest:
-    Type: Integer
+    Type: Number
     Description: 1 if function should be invoked in test mode, 0 otherwise
     Default: 0
 
