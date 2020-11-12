@@ -18,4 +18,4 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_DATABASE = os.environ.get("DB_DATABASE")
 
 # Misc settings
-TEST = os.environ.get("TEST")
+TEST = int(os.environ.get("TEST"))
