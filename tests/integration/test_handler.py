@@ -1,21 +1,7 @@
-import os
+from haverhill_311_function import app
+from haverhill_311_function.modules import db
 
-os.environ.update({
-    "QALERT_REQUEST_ENDPOINT": "blah",
-    "QALERT_API_KEY": "blah",
-    "QALERT_REQUEST_ENDPOINT_TEST": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",  # noqa: E501
-    "DB_HOST": "localhost",
-    "DB_PORT": "5432",
-    "DB_USER": "docker",
-    "DB_PASSWORD": "docker",
-    "DB_DATABASE": "qalert_test",
-    "TEST": "true"
-})
-
-from haverhill_311_function import app  # noqa: E402
-from haverhill_311_function.modules import db  # noqa: E402
-
-import pytest  # noqa: E402
+import pytest
 
 
 @pytest.fixture()
