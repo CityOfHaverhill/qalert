@@ -21,7 +21,7 @@ def construct_point(context) -> WKBElement:
     latitude = context.get_current_parameters()['latitude']
     longitude = context.get_current_parameters()['longitude']
     return from_shape(
-        shape=Point(latitude, longitude),
+        shape=Point(longitude, latitude),
         srid=NAD_83
     )
 
