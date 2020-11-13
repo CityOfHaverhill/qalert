@@ -16,7 +16,7 @@ def pull():
             api_key=settings.QALERT_API_KEY
         )
     payload = {}
-    headers = {}
+    headers = {'User-Agent': 'Custom'}
     response = requests.get(url, headers=headers, data=payload)
     data = response.json()
     return data
