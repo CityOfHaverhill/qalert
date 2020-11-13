@@ -6,8 +6,8 @@ from . import settings
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, DateTime, Text, Float
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR
+from sqlalchemy.orm import sessionmaker, validates
 from geoalchemy2 import Geometry
 from geoalchemy2.shape import from_shape
 from geoalchemy2.types import WKBElement
@@ -36,12 +36,12 @@ class QAlertRequest(Base):
     last_action = Column(DateTime)
     last_action_unix = Column(Integer)
     type_id = Column(Integer)
-    type_name = Column(Text)
-    comments = Column(Text)
-    street_num = Column(Text)
-    street_name = Column(Text)
-    cross_name = Column(Text)
-    city_name = Column(Text)
+    type_name = Column(VARCHAR(length=200))
+    comments = Column(VARCHAR(length=5000))
+    street_num = Column(VARCHAR(length=100))
+    street_name = Column(VARCHAR(length=100))
+    cross_name = Column(VARCHAR(length=100))
+    city_name = Column(VARCHAR(length=100))
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     point = Column(
@@ -52,6 +52,13 @@ class QAlertRequest(Base):
         nullable=False,
         default=construct_point
     )
+
+    @validates('type_name', 'comments', 'street_num', 'street_name', 'cross_name', 'city_name')  # noqa: E501
+    def validate_length(self, key, value):
+        max_len = getattr(self.__class__, key).prop.columns[0].type.length
+        if len(value) > max_len:
+            return value[:max_len]
+        return value
 
 
 class QAlertDB:
