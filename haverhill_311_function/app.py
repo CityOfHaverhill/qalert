@@ -4,6 +4,7 @@ from .modules import db
 from .modules import sanitizer
 from .modules import qalert
 
+import requests
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
@@ -18,7 +19,7 @@ def lambda_handler(event, context):
     """
     data = qalert.pull()
 
-    if not data:
+    if type(data) == requests.models.Response:
         return
 
     latest_date = data[0]["createDate"]
