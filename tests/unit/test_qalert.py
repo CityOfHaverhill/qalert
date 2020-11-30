@@ -1,9 +1,6 @@
 from haverhill_311_function.modules import settings
 from haverhill_311_function.modules import qalert
 
-import pytest
-import json
-
 
 def test_valid_format():
     settings.TEST = True
