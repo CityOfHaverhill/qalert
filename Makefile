@@ -7,7 +7,7 @@ stop-db:
 	docker kill qalert_db_local
 
 run-function: start-db
-	sam build
+	sam build --use-container
 	sam local invoke --env-vars tests/local_config.json --docker-network host
 
 unit-tests: start-db

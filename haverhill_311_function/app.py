@@ -17,8 +17,23 @@ def lambda_handler(event, context):
         Lambda Context runtime methods and attributes
     """
     data = qalert.pull()
+
+    if len(data) == 0:
+        return
+
+    latest_date = data[0]["createDate"]
+
     qalert_requests: List[db.QAlertRequest] = sanitizer.sanitize(
         qalert_data=data
     )
     with db.QAlertDB() as qalert_db:
-        qalert_db.save_many(requests=qalert_requests)
+        try:
+            qalert_db.save_many(requests=qalert_requests)
+        except Exception as e:
+            print(e)
+
+    with db.QAlertAuditDB() as qalert_audit_db:
+        latest_qalert_audit = db.QAlertAudit(
+            create_date=latest_date
+        )
+        qalert_audit_db.save(latest_qalert_audit)
