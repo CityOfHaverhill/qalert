@@ -4,9 +4,11 @@ from typing import List, Optional
 
 from . import settings
 
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR
+from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR, Text
 from sqlalchemy.orm import sessionmaker, validates
 from geoalchemy2 import Geometry
 from geoalchemy2.shape import from_shape

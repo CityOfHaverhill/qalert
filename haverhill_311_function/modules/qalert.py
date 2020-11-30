@@ -22,7 +22,7 @@ def pull():
     
         create_date_min = None
         with db.QAlertAuditDB() as audit_db:
-            latest_request = db.get_latest_request()
+            latest_request = audit_db.get_latest_request()
 
         if latest_request is not None:
             create_date_min = latest_request.create_date
