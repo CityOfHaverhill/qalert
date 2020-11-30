@@ -33,5 +33,7 @@ def pull():
     response = requests.request(
         "GET", url, headers=headers, data=payload
     )
+    if type(response) == requests.models.Response:
+        return response
     data = response.json()
     return data
