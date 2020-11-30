@@ -33,7 +33,7 @@ def pull():
     response = requests.request(
         "GET", url, headers=headers, data=payload
     )
-    if type(response) == requests.models.Response:
+    if response.status_code == 404:
         return data
     data = response.json()
     return data
