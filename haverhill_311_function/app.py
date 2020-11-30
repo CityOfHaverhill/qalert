@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     """
     data = qalert.pull()
 
-    if type(data) == requests.models.Response:
+    if len(data) == 0:
         return
 
     latest_date = data[0]["createDate"]

@@ -34,6 +34,6 @@ def pull():
         "GET", url, headers=headers, data=payload
     )
     if type(response) == requests.models.Response:
-        return response
+        return data
     data = response.json()
     return data
