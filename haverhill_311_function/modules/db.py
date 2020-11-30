@@ -78,14 +78,14 @@ class QAlertAuditDB:
         self._prepare_connection()
 
     def _load_params(self, **kwargs):
-        self.host: str = kwargs.get('host') or os.environ['db_host']
-        self.port: int = kwargs.get('port') or os.environ['db_port']
-        self.user: str = kwargs.get('user') or os.environ['db_user']
-        self.database: str = (
-            kwargs.get('database') or os.environ['db_database']
-        )
+        self.host: str = kwargs.get('host') or settings.DB_HOST
+        self.port: int = kwargs.get('port') or settings.DB_PORT
+        self.user: str = kwargs.get('user') or settings.DB_USER
         self.password: str = (
-            kwargs.get('password') or os.environ.get('db_password')
+            kwargs.get('password') or settings.DB_PASSWORD
+        )
+        self.database: str = (
+            kwargs.get('database') or settings.DB_DATABASE
         )
 
     def _prepare_connection(self):
@@ -97,7 +97,7 @@ class QAlertAuditDB:
                 port=self.port,
                 database=self.database
             ),
-            echo=True
+            echo=(True if settings.TEST else False)
         )
         self.session_maker = sessionmaker(bind=self.engine)
 
@@ -115,7 +115,7 @@ class QAlertAuditDB:
         if request is None and raise_exception:
             raise Exception("QAlert request not found.")
         return request
-
+        
     def get_latest_request(self, raise_exception=False) -> QAlertAudit:
         request = self.session.query(QAlertAudit).order_by(
             QAlertAudit.id.desc()).first()
