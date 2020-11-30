@@ -19,7 +19,6 @@ def pull():
             api_key=settings.QALERT_API_KEY,
             count=-1
         )
-    
         create_date_min = None
         with db.QAlertAuditDB() as audit_db:
             latest_request = audit_db.get_latest_request()
@@ -29,7 +28,6 @@ def pull():
 
         if create_date_min is not None:
             url += "&createDateMin=" + create_date_min
-          
     payload = {}
     headers = {'User-Agent': 'Custom'}
     response = requests.request(
