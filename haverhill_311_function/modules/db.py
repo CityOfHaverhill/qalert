@@ -4,8 +4,6 @@ from typing import List, Optional
 
 from . import settings
 
-import os
-
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR, Text
@@ -115,7 +113,7 @@ class QAlertAuditDB:
         if request is None and raise_exception:
             raise Exception("QAlert request not found.")
         return request
-        
+
     def get_latest_request(self, raise_exception=False) -> QAlertAudit:
         request = self.session.query(QAlertAudit).order_by(
             QAlertAudit.id.desc()).first()
