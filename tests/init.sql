@@ -25,3 +25,17 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.qalert_requests
     OWNER to docker;
+
+CREATE TABLE public.qalert_audits
+(
+    id SERIAL NOT NULL,
+    create_date text 
+)
+
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.qalert_audits
+    OWNER to docker;

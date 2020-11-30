@@ -6,7 +6,7 @@ from . import settings
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR
+from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR, Text
 from sqlalchemy.orm import sessionmaker, validates
 from geoalchemy2 import Geometry
 from geoalchemy2.shape import from_shape
@@ -59,6 +59,82 @@ class QAlertRequest(Base):
         if len(value) > max_len:
             return value[:max_len]
         return value
+
+
+class QAlertAudit(Base):
+    """Sqlalchemy orm model for the qalert audit table"""
+    __tablename__ = 'qalert_audits'
+    id = Column(Integer, primary_key=True)
+    create_date = Column(Text)
+
+
+class QAlertAuditDB:
+    CONNECTION_STRING = "postgresql://{user}:{password}@{host}:{port}/{database}".format  # noqa: E501
+
+    def __init__(self, **kwargs):
+        self._load_params(**kwargs)
+        self._prepare_connection()
+
+    def _load_params(self, **kwargs):
+        self.host: str = kwargs.get('host') or settings.DB_HOST
+        self.port: int = kwargs.get('port') or settings.DB_PORT
+        self.user: str = kwargs.get('user') or settings.DB_USER
+        self.password: str = (
+            kwargs.get('password') or settings.DB_PASSWORD
+        )
+        self.database: str = (
+            kwargs.get('database') or settings.DB_DATABASE
+        )
+
+    def _prepare_connection(self):
+        self.engine = create_engine(
+            self.CONNECTION_STRING(
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port,
+                database=self.database
+            ),
+            echo=(True if settings.TEST else False)
+        )
+        self.session_maker = sessionmaker(bind=self.engine)
+
+    def save(self, request: QAlertAudit, commit=True):
+        self.session.add(request)
+        self.session.flush()
+        if commit:
+            self.commit()
+
+    def commit(self):
+        self.session.commit()
+
+    def get(self, request_id: int, raise_exception=False) -> Optional[QAlertAudit]:  # noqa: E501
+        request = self.session.query(QAlertAudit).get(request_id)
+        if request is None and raise_exception:
+            raise Exception("QAlert request not found.")
+        return request
+
+    def get_latest_request(self, raise_exception=False) -> QAlertAudit:
+        request = self.session.query(QAlertAudit).order_by(
+            QAlertAudit.id.desc()).first()
+        if request is None and raise_exception:
+            raise Exception("QAlert request not found.")
+        return request
+
+    def _connect(self):
+        """Establish connection with psql db."""
+        self.session = self.session_maker()
+
+    def _disconnect(self):
+        """Kill connection with psql db."""
+        self.session.close()
+
+    def __enter__(self):
+        self._connect()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._disconnect()
 
 
 class QAlertDB:
