@@ -4,8 +4,6 @@ from .modules import db
 from .modules import sanitizer
 from .modules import qalert
 
-import requests
-
 
 def lambda_handler(event, context):
     """Sample pure Lambda function
