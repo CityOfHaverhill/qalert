@@ -1,7 +1,9 @@
 pull_request_rules:
   - name: Auto merge into main when CI passes
     conditions:
-      - check-success=[lint, unit-test, integration-test]
+      - check-success=lint
+      - check-success=unit-test
+      - check-success=integration-test
       - base=main
       - head~=^feature_.*
     actions:
