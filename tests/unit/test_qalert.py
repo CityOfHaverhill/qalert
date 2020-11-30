@@ -1,8 +1,6 @@
-# import os
 from haverhill_311_function.modules import settings
 from haverhill_311_function.modules import qalert
 
-import typing
 import pytest
 import json
 
@@ -10,8 +8,8 @@ import json
 def test_valid_format():
     settings.TEST = True
     res = qalert.pull()
-    print(res)
-    # assert res)) == typing.List[dict]
+    assert type(res) == list
+    assert type(res[0]) == dict
 
 
 def test_using_endpoint():
@@ -23,4 +21,5 @@ def test_using_endpoint():
 def test_actual_endpoint():
     settings.TEST = False
     res = qalert.pull()
+    print(res)
     assert res == []

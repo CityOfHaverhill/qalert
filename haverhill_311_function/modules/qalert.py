@@ -33,7 +33,8 @@ def pull():
     response = requests.request(
         "GET", url, headers=headers, data=payload
     )
-    if response.status_code == 404:
+    if response.status_code != 200:
         return data
+
     data = response.json()
     return data
