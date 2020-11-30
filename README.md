@@ -1,5 +1,7 @@
 # CS501_Haverhill
 
+[![ci Actions Status](https://github.com/jinyoungbang/CS501_Haverhill/workflows/ci/badge.svg)](https://github.com/jinyoungbang/CS501_Haverhill/actions) [![cd Actions Status](https://github.com/jinyoungbang/CS501_Haverhill/workflows/cd/badge.svg)](https://github.com/jinyoungbang/CS501_Haverhill/actions)
+
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
 - haverhill_311_function - Code for the application's Lambda function.

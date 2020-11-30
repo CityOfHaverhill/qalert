@@ -4,18 +4,22 @@ from . import db
 
 import requests
 
-URL = settings.URL
-API_KEY = settings.API_KEY
-TEST_URL = settings.TEST_URL
-
 
 def pull():
     """
     Makes a GET request to fetch 311 Data from QAlert API and returns the data.
     """
+
     data = []
-    try:
-        url = URL + "?key=" + API_KEY
+    if settings.TEST:
+        url = settings.QALERT_REQUEST_ENDPOINT_TEST
+    else:
+        url = "{endpoint}?key={api_key}&count={count}".format(
+            endpoint=settings.QALERT_REQUEST_ENDPOINT,
+            api_key=settings.QALERT_API_KEY,
+            count=-1
+        )
+    
         create_date_min = None
         with db.QAlertAuditDB() as audit_db:
             latest_request = db.get_latest_request()
@@ -25,29 +29,11 @@ def pull():
 
         if create_date_min is not None:
             url += "&createDateMin=" + create_date_min
-        payload = {}
-        headers = {'User-Agent': 'Custom'}
-        response = requests.request(
-            "GET", url, headers=headers, data=payload
-        )
-        data = response.json()
-        return data
-    except Exception as exc:
-        print(f"Network error: {exc}.")
-
-
-def pull_data_test():
-    """
-    Makes an API call to sample test data of 311 requests from S3 bucket.
-    """
-    data = []
-    try:
-        payload = {}
-        headers = {}
-        response = requests.request(
-            "GET", TEST_URL, headers=headers, data=payload)
-        data = response.json()
-        return data
-
-    except Exception as e:
-        print(e)
+          
+    payload = {}
+    headers = {'User-Agent': 'Custom'}
+    response = requests.request(
+        "GET", url, headers=headers, data=payload
+    )
+    data = response.json()
+    return data

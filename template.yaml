@@ -36,6 +36,10 @@ Parameters:
     Type: String
   qalertApiKey:
     Type: String
+  isTest:
+    Type: Number
+    Description: 1 if function should be invoked in test mode, 0 otherwise
+    Default: 0
 
 Resources:
   PipelineFunction:
@@ -49,7 +53,7 @@ Resources:
         CWSchedule:
           Type: Schedule
           Properties:
-            Schedule: 'rate(1 minute)'
+            Schedule: 'rate(2 minutes)'
             Name: 311PipelineSchedule
             Description: Schedules execution of the Hverhill 311 ETL pipeline
             Enabled: True
@@ -68,15 +72,16 @@ Resources:
                 - !Sub arn:aws:rds:us-east-2:361899811679:db-proxy:prx-08c1220060b8b94b7/postgres
       Environment:
         Variables:
-          db_host: !Ref dbHost
-          db_user: !Ref dbUsername
-          db_database: !Ref dbName
-          db_port: !Ref dbPort
-          db_password: !Ref dbPassword
-          URL: !Ref qalertUrl
-          TEST_URL: !Ref qalertTestUrl
-          API_KEY: !Ref qalertApiKey
-      Timeout: 30
+          DB_HOST: !Ref dbHost
+          DB_USER: !Ref dbUsername
+          DB_DATABASE: !Ref dbName
+          DB_PORT: !Ref dbPort
+          DB_PASSWORD: !Ref dbPassword
+          QALERT_REQUEST_ENDPOINT: !Ref qalertUrl
+          QALERT_REQUEST_ENDPOINT_TEST: !Ref qalertTestUrl
+          QALERT_API_KEY: !Ref qalertApiKey
+          TEST: !Ref isTest
+      Timeout: 100
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

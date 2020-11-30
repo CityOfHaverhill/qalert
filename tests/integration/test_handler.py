@@ -1,20 +1,7 @@
-import os
+from haverhill_311_function import app
+from haverhill_311_function.modules import db
 
-os.environ.update({
-    "URL": "blah",
-    "API_KEY": "blah",
-    "TEST_URL": "https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json",  # noqa: E501
-    "db_host": "localhost",
-    "db_port": "5432",
-    "db_user": "docker",
-    "db_password": "docker",
-    "db_database": "qalert_test"
-})
-
-from haverhill_311_function import app  # noqa: E402
-from haverhill_311_function.modules import db  # noqa: E402
-
-import pytest  # noqa: E402
+import pytest
 
 
 @pytest.fixture()

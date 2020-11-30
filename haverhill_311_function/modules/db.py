@@ -1,12 +1,13 @@
 """The database module is the interface to PostgreSQL db with 311 request data.
 """
-import os
 from typing import List, Optional
+
+from . import settings
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, DateTime, Text, Float
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, DateTime, Float, VARCHAR
+from sqlalchemy.orm import sessionmaker, validates
 from geoalchemy2 import Geometry
 from geoalchemy2.shape import from_shape
 from geoalchemy2.types import WKBElement
@@ -20,7 +21,7 @@ def construct_point(context) -> WKBElement:
     latitude = context.get_current_parameters()['latitude']
     longitude = context.get_current_parameters()['longitude']
     return from_shape(
-        shape=Point(latitude, longitude),
+        shape=Point(longitude, latitude),
         srid=NAD_83
     )
 
@@ -35,12 +36,12 @@ class QAlertRequest(Base):
     last_action = Column(DateTime)
     last_action_unix = Column(Integer)
     type_id = Column(Integer)
-    type_name = Column(Text)
-    comments = Column(Text)
-    street_num = Column(Text)
-    street_name = Column(Text)
-    cross_name = Column(Text)
-    city_name = Column(Text)
+    type_name = Column(VARCHAR(length=200))
+    comments = Column(VARCHAR(length=5000))
+    street_num = Column(VARCHAR(length=100))
+    street_name = Column(VARCHAR(length=100))
+    cross_name = Column(VARCHAR(length=100))
+    city_name = Column(VARCHAR(length=100))
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     point = Column(
@@ -51,6 +52,13 @@ class QAlertRequest(Base):
         nullable=False,
         default=construct_point
     )
+
+    @validates('type_name', 'comments', 'street_num', 'street_name', 'cross_name', 'city_name')  # noqa: E501
+    def validate_length(self, key, value):
+        max_len = getattr(self.__class__, key).prop.columns[0].type.length
+        if len(value) > max_len:
+            return value[:max_len]
+        return value
 
 
 class QAlertAudit(Base):
@@ -158,14 +166,14 @@ class QAlertDB:
         self._prepare_connection()
 
     def _load_params(self, **kwargs):
-        self.host: str = kwargs.get('host') or os.environ['db_host']
-        self.port: int = kwargs.get('port') or os.environ['db_port']
-        self.user: str = kwargs.get('user') or os.environ['db_user']
-        self.database: str = (
-            kwargs.get('database') or os.environ['db_database']
-        )
+        self.host: str = kwargs.get('host') or settings.DB_HOST
+        self.port: int = kwargs.get('port') or settings.DB_PORT
+        self.user: str = kwargs.get('user') or settings.DB_USER
         self.password: str = (
-            kwargs.get('password') or os.environ.get('db_password')
+            kwargs.get('password') or settings.DB_PASSWORD
+        )
+        self.database: str = (
+            kwargs.get('database') or settings.DB_DATABASE
         )
 
     def _prepare_connection(self):
@@ -177,7 +185,7 @@ class QAlertDB:
                 port=self.port,
                 database=self.database
             ),
-            echo=True
+            echo=(True if settings.TEST else False)
         )
         self.session_maker = sessionmaker(bind=self.engine)
 
