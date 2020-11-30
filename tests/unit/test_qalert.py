@@ -1,20 +1,26 @@
+# import os
+from haverhill_311_function.modules import settings
 from haverhill_311_function.modules import qalert
 
+import typing
 import pytest
 import json
 
 
-def check_valid_format():
-    os.environ["TEST"] = True
+def test_valid_format():
+    settings.TEST = True
     res = qalert.pull()
-    assert type(json.loads(res)) == dict
+    print(res)
+    # assert res)) == typing.List[dict]
 
-def check_using_test_endpoint():
-    os.environ["TEST"] = True
+
+def test_using_endpoint():
+    settings.TEST = True
     res = qalert.pull()
     assert res is not None
 
-def check_actual_endpoint():
-    os.environ["TEST"] = False
+
+def test_actual_endpoint():
+    settings.TEST = False
     res = qalert.pull()
-    assert res.status_code == 404
+    assert res == []
