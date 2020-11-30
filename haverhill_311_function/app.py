@@ -27,10 +27,7 @@ def lambda_handler(event, context):
         qalert_data=data
     )
     with db.QAlertDB() as qalert_db:
-        try:
-            qalert_db.save_many(requests=qalert_requests)
-        except Exception as e:
-            print(e)
+        qalert_db.save_many(requests=qalert_requests)
 
     with db.QAlertAuditDB() as qalert_audit_db:
         latest_qalert_audit = db.QAlertAudit(
