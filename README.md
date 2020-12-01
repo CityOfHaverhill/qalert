@@ -1,4 +1,4 @@
-# CS501_Haverhill
+# CS501 Haverhill Project
 
 [![ci Actions Status](https://github.com/jinyoungbang/CS501_Haverhill/workflows/ci/badge.svg)](https://github.com/jinyoungbang/CS501_Haverhill/actions) [![cd Actions Status](https://github.com/jinyoungbang/CS501_Haverhill/workflows/cd/badge.svg)](https://github.com/jinyoungbang/CS501_Haverhill/actions)
 
