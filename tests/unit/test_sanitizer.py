@@ -16,7 +16,7 @@ def qalert_data():
              "typeId": 300,
              "typeName": "Overgrown Grass/Weeds",
              "hasLinks": False,
-             "comments": "Yard is a mess!\nOvergrown grass and trash alongside of garage.",
+             "comments": "Yard is a mess!\nOvergrown grass and trash alongside of garage.",  # noqa: E501
              "streetNum": "10",
              "streetName": "PEAR TREE RD",
              "crossName": "",
@@ -40,7 +40,7 @@ def qalert_requests():
                       "typeId": 300,
                       "typeName": "Overgrown Grass/Weeds",
                       "hasLinks": False,
-                      "comments": "Yard is a mess!\nOvergrown grass and trash alongside of garage.",
+                      "comments": "Yard is a mess!\nOvergrown grass and trash alongside of garage.",  # noqa: E501
                       "streetNum": "10",
                       "streetName": "PEAR TREE RD",
                       "crossName": "",
