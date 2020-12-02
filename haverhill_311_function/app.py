@@ -1,8 +1,11 @@
-from typing import List
-
 from .modules import db
-from .modules import sanitizer
 from .modules import qalert
+from .modules import sanitizer
+
+from func_timeout import func_timeout, FunctionTimedOut
+
+
+latest_date: str = None
 
 
 def lambda_handler(event, context):
@@ -16,21 +19,33 @@ def lambda_handler(event, context):
     context: object, required
         Lambda Context runtime methods and attributes
     """
+    try:
+        # timeout run_pipeline function after 80 seconds so that we can do
+        # nessesary work cleanup before lambda gets terminated
+        func_timeout(timeout=80, func=run_pipeline)
+    except FunctionTimedOut:
+        print('Function timed out before completing but was handled')
+    finally:
+        if latest_date:
+            with db.QAlertAuditDB() as qalert_audit_db:
+                latest_qalert_audit = db.QAlertAudit(
+                    create_date=latest_date
+                )
+                qalert_audit_db.save(latest_qalert_audit)
+
+
+def run_pipeline():
+    global latest_date
+
     data = qalert.pull()
-
-    if len(data) == 0:
-        return
-
-    latest_date = data[0]["createDate"]
-
-    qalert_requests: List[db.QAlertRequest] = sanitizer.sanitize(
-        qalert_data=data
-    )
     with db.QAlertDB() as qalert_db:
-        qalert_db.save_many(requests=qalert_requests)
-
-    with db.QAlertAuditDB() as qalert_audit_db:
-        latest_qalert_audit = db.QAlertAudit(
-            create_date=latest_date
-        )
-        qalert_audit_db.save(latest_qalert_audit)
+        for qalert_request_data in data:
+            try:
+                qalert_request = sanitizer.sanitize(
+                    qalert_data=qalert_request_data
+                )
+                qalert_db.save(request=qalert_request)
+                latest_date = qalert_request_data['createDate']
+            except Exception as exc:
+                print(f'Exception processing qalert_request: {exc}')
+                continue

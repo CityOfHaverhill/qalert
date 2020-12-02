@@ -1,6 +1,6 @@
 from datetime import datetime
 from haverhill_311_function.modules.sanitizer import QAlertRequestSchema
-from haverhill_311_function.modules.sanitizer import sanitize
+from haverhill_311_function.modules.sanitizer import sanitize_many
 import pytest
 
 
@@ -30,7 +30,7 @@ def qalert_data():
 
 @pytest.fixture
 def qalert_requests():
-    return sanitize([{"id": 106472,
+    return sanitize_many([{"id": 106472,
                       "status": 0,
                       "createDate": "10/9/2020 10:58 AM",
                       "priorityToDisplay": 2,

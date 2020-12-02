@@ -1,8 +1,11 @@
 """The QAlert module is a wrapper client around the QAlert API."""
+from io import BytesIO
+
 from . import settings
 from . import db
 
 import requests
+import ijson
 
 
 def pull():
@@ -14,27 +17,27 @@ def pull():
     if settings.TEST:
         url = settings.QALERT_REQUEST_ENDPOINT_TEST
     else:
-        url = "{endpoint}?key={api_key}&count={count}".format(
+        url = "{endpoint}?key={api_key}&count={count}&sort={sort}".format(
             endpoint=settings.QALERT_REQUEST_ENDPOINT,
             api_key=settings.QALERT_API_KEY,
-            count=-1
+            count=-1,
+            sort="[createdate] asc,"
         )
-        create_date_min = None
+
         with db.QAlertAuditDB() as audit_db:
             latest_request = audit_db.get_latest_request()
 
         if latest_request is not None:
-            create_date_min = latest_request.create_date
+            url += f"&createDateMin={latest_request.create_date}"
 
-        if create_date_min is not None:
-            url += "&createDateMin=" + create_date_min
     payload = {}
     headers = {'User-Agent': 'Custom'}
     response = requests.request(
         "GET", url, headers=headers, data=payload
     )
+
     if response.status_code != 200:
         return data
 
-    data = response.json()
+    data = ijson.items(BytesIO(response.content), 'item')
     return data

@@ -1,3 +1,5 @@
+import types
+
 from haverhill_311_function.modules import settings
 from haverhill_311_function.modules import qalert
 
@@ -5,8 +7,8 @@ from haverhill_311_function.modules import qalert
 def test_valid_format():
     settings.TEST = True
     res = qalert.pull()
-    assert type(res) == list
-    assert type(res[0]) == dict
+    for qalert_request in res:
+        assert type(qalert_request) == dict
 
 
 def test_using_endpoint():

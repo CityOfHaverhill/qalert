@@ -101,12 +101,16 @@ class QAlertAuditDB:
 
     def save(self, request: QAlertAudit, commit=True):
         self.session.add(request)
-        self.session.flush()
         if commit:
             self.commit()
 
     def commit(self):
-        self.session.commit()
+        try:
+            self.session.flush()
+            self.session.commit()
+        except Exception as exc:
+            self.session.rollback()
+            raise exc
 
     def get(self, request_id: int, raise_exception=False) -> Optional[QAlertAudit]:  # noqa: E501
         request = self.session.query(QAlertAudit).get(request_id)
@@ -193,7 +197,6 @@ class QAlertDB:
         if self.get(request_id=request.id):
             return
         self.session.add(request)
-        self.session.flush()
         if commit:
             self.commit()
 
@@ -204,7 +207,12 @@ class QAlertDB:
             self.commit()
 
     def commit(self):
-        self.session.commit()
+        try:
+            self.session.flush()
+            self.session.commit()
+        except Exception as exc:
+            self.session.rollback()
+            raise exc
 
     def get(self, request_id: int, raise_exception=False) -> Optional[QAlertRequest]:  # noqa: E501
         request = self.session.query(QAlertRequest).get(request_id)
@@ -220,7 +228,6 @@ class QAlertDB:
 
     def delete(self, request: QAlertRequest, commit=True):
         self.session.delete(request)
-        self.session.flush()
         if commit:
             self.commit()
 
