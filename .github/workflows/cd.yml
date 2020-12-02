@@ -24,9 +24,9 @@ jobs:
     - name: Deploy
       run: |
         sam deploy \
-        --stack-name haverhill-311-stack \
+        --stack-name haverhill-311-cloudformation-stack \
         --s3-bucket aws-sam-cli-managed-default-samclisourcebucket-1cdddoijwrjry \
-        --s3-prefix haverhill-311-stack \
+        --s3-prefix haverhill-311-cloudformation-stack \
         --no-confirm-changeset \
         --parameter-overrides ${{ secrets.LAMBDA_PARAMETERS }} \
         --region us-east-2

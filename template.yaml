@@ -62,14 +62,6 @@ Resources:
           - sg-0b419d108348c329b
         SubnetIds:
           - subnet-0408d2b368d189bfc
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - rds-db:connect
-              Resource:
-                - !Sub arn:aws:rds:us-east-2:361899811679:db-proxy:prx-08c1220060b8b94b7/postgres
       Environment:
         Variables:
           DB_HOST: !Ref dbHost
