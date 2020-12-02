@@ -30,25 +30,26 @@ def qalert_data():
 
 @pytest.fixture
 def qalert_requests():
-    return sanitize_many([{"id": 106472,
-                      "status": 0,
-                      "createDate": "10/9/2020 10:58 AM",
-                      "priorityToDisplay": 2,
-                      "createDateUnix": 1602255480,
-                      "lastAction": "10/9/2020 10:58 AM",
-                      "lastActionUnix": 1602255480,
-                      "typeId": 300,
-                      "typeName": "Overgrown Grass/Weeds",
-                      "hasLinks": False,
-                      "comments": "Yard is a mess!\nOvergrown grass and trash alongside of garage.",  # noqa: E501
-                      "streetNum": "10",
-                      "streetName": "PEAR TREE RD",
-                      "crossName": "",
-                      "cityName": "Haverhill",
-                      "latitude": 42.7989995,
-                      "longitude": -71.05045,
-                      "name": "MIKE COSTA",
-                      "email": "mikecosta3065@gmail.com"}])
+    return sanitize_many([{
+        "id": 106472,
+        "status": 0,
+        "createDate": "10/9/2020 10:58 AM",
+        "priorityToDisplay": 2,
+        "createDateUnix": 1602255480,
+        "lastAction": "10/9/2020 10:58 AM",
+        "lastActionUnix": 1602255480,
+        "typeId": 300,
+        "typeName": "Overgrown Grass/Weeds",
+        "hasLinks": False,
+        "comments": "Yard is a mess!\nOvergrown grass and trash alongside of garage.",  # noqa: E501
+        "streetNum": "10",
+        "streetName": "PEAR TREE RD",
+        "crossName": "",
+        "cityName": "Haverhill",
+        "latitude": 42.7989995,
+        "longitude": -71.05045,
+        "name": "MIKE COSTA",
+        "email": "mikecosta3065@gmail.com"}])
 
 
 def test_schema(qalert_data):

@@ -1,5 +1,3 @@
-import types
-
 from haverhill_311_function.modules import settings
 from haverhill_311_function.modules import qalert
 
