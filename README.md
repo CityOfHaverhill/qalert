@@ -1,6 +1,6 @@
 # City of Haverhill QAlert Data Pipeline
 
-[![ci Actions Status](https://github.com/jinyoungbang/CS501_Haverhill/workflows/ci/badge.svg)](https://github.com/jinyoungbang/CS501_Haverhill/actions) [![cd Actions Status](https://github.com/jinyoungbang/CS501_Haverhill/workflows/cd/badge.svg)](https://github.com/jinyoungbang/CS501_Haverhill/actions)
+[![ci Actions Status](https://github.com/CityOfHaverhill/qalert/workflows/ci/badge.svg)](https://github.com/CityOfHaverhill/qalert/actions) [![cd Actions Status](https://github.com/CityOfHaverhill/qalert/workflows/cd/badge.svg)](https://github.com/CityOfHaverhill/qalert/actions)
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
