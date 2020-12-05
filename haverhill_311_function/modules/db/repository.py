@@ -98,7 +98,7 @@ class Repository():
         try:
             self.session.flush()
             self.session.commit()
-        except SQLAlchemyError as exc:
+        except (SQLAlchemyError, ValueError) as exc:
             self.session.rollback()
             raise DBException(exc)
 
