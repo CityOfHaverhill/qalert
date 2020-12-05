@@ -43,11 +43,11 @@ def run_pipeline(timeout: int):
     Notes
     ----------
     pipeline execution steps:
-        1. pull new 311 requests from QAlert in acending order of creation date (oldest first)
-        2. for each new 311 request returned from QAlert do steps 3-5 (until completion or timeout is reached)
-        3. santitize the raw 311 request by removing pii and loading into a QAlertRequest instance
+        1. pull new 311 requests from QAlert in acending order of creation date
+        2. for each new 311 request returned from QAlert do steps 3-5
+        3. santitize the raw 311 request into QAlertRequest instance
         4. save and commit the QAlertRequest instance
-        5. update the global latest_date variable with the creation date of the saved QAlertRequest
+        5. set latest_date variable with the creation date of the QAlertRequest
     """
     global latest_date
 
@@ -63,10 +63,13 @@ def run_pipeline(timeout: int):
             data = qalert.pull()
             # Process 311 requests one by one
             for qalert_request_data in data:
-                process_qalert_request(qalert_request_data, qalert_request_repo)
+                process_qalert_request(
+                    qalert_request_data,
+                    qalert_request_repo
+                )
     except TimeoutError:
         # Function was not able to complete within alloted time
-        print('Function timed out before completing but was handled. Saving progress.')
+        print('Function timed out before completing but was handled. Saving progress.')  # noqa: E501
     finally:
         if latest_date:
             # Save progress (last 311 request from QAlert saved) so that next
@@ -80,14 +83,14 @@ def run_pipeline(timeout: int):
         qalert_request_repo.disconnect()
 
 
-def process_qalert_request(qalert_request_data: dict, qalert_request_repo: db.Repository):
+def process_qalert_request(qalert_request_data: dict, qalert_request_repo: db.Repository):  # noqa: E501
     """Sanitize and save a 311 request from QAlert to database.
-    
+
     Parameters
     ----------
     qalert_request_data: dict, required
         A 311 request retreived from QAlert API.
-    
+
     qalert_request_repo: Repository, required
         A Repository bound to the QAlertRequest model.
     """

@@ -4,7 +4,6 @@ from .exceptions import DBException
 from sqlalchemy.exc import SQLAlchemyError
 
 
-
 class Repository():
     """Repository is interface to operate on a particular ORM model (table).
 
@@ -14,7 +13,7 @@ class Repository():
         request_2 = QAlertRequest(id=2, latitude=1.1, longitude=1.1)
         requests = [request_1, request_2]
 
-        Option 1: Use as a context manager -- handles aquiring and releasing resources (db sessions) for you
+        Option 1: Use as a context manager (connects and disconnects for you)
         with Repository(QAlertRequest) as qalert_request_repo:
             # save individual request object
             qalert_request_repo.save(request_1)
@@ -30,7 +29,7 @@ class Repository():
             request_1.type_name = "trash pickup"
             qalert_request_repo.save(request_1)
 
-        Option 2: Manually decide when to aquire and release resources (db sessions)
+        Option 2: Manually aquire and release resources (db sessions)
         qalert_request_repo = Repository(QAlertRequest)
         qalert_request_repo.connect()
         ...
@@ -38,7 +37,8 @@ class Repository():
         ...
         qalert_request_repo.disconnect()
 
-        qalert_audit_repo = Repository(QAlertAudit, connect=True)  # auto connect
+        # Auto connect using "connect" parameter
+        qalert_audit_repo = Repository(QAlertAudit, connect=True)
         ...
         do operations
         ...
@@ -50,14 +50,14 @@ class Repository():
         self.session = None
         if connect:
             self.connect()
-    
+
     def save(self, entity, commit=True):
         if self.get(entity_id=entity.id):
             return
         self.session.add(entity)
         if commit:
             self.commit()
-    
+
     def save_many(self, entities, commit=True):
         for entity in entities:
             self.save(entity, commit=False)
@@ -67,9 +67,11 @@ class Repository():
     def get(self, entity_id, raise_exception=False):
         entity = self.session.query(self.model).get(entity_id)
         if entity is None and raise_exception:
-            raise DBException(f"{self.model.__name__} with id {entity_id} not found.")
+            raise DBException(
+                f"{self.model.__name__} with id {entity_id} not found."
+            )
         return entity
-    
+
     def get_latest(self, raise_exception=False):
         entity = self.session.query(self.model).order_by(
             self.model.id.desc()).first()
@@ -99,10 +101,10 @@ class Repository():
         except SQLAlchemyError as exc:
             self.session.rollback()
             raise DBException(exc)
-    
+
     def connect(self):
         self.session = _create_session()
-    
+
     def disconnect(self):
         if self.session is not None:
             self.session.close()

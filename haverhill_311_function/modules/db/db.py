@@ -21,7 +21,7 @@ def _get_engine():
                 port=settings.DB_PORT,
                 database=settings.DB_DATABASE
             ),
-            echo=False  #(True if settings.TEST else False)
+            echo=(True if settings.TEST else False)
         )
     return _engine
 
@@ -31,5 +31,5 @@ def _create_session():
 
     if _Session is None:
         _Session = sessionmaker(bind=_get_engine())
-    
+
     return _Session()

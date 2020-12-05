@@ -10,6 +10,7 @@ def lambda_event():
     """ Generates An Event"""
     return {}
 
+
 @pytest.fixture()
 def lambda_context():
     """Generates An Context"""
@@ -17,7 +18,7 @@ def lambda_context():
         @staticmethod
         def get_remaining_time_in_millis():
             return 200000
-    
+
     return Context()
 
 
@@ -27,12 +28,12 @@ def qalert_request_repo():
     settings.DB_PORT = 5432
     settings.DB_USER = 'docker'
     settings.DB_PASSWORD = 'docker'
-    settings.DB_DATABASE = 'qalert_test' 
-    
+    settings.DB_DATABASE = 'qalert_test'
+
     return db.create_repo(db.QAlertRequest)
 
 
-def test_lambda_handler(lambda_event, lambda_context, qalert_request_repo: db.Repository):
+def test_lambda_handler(lambda_event, lambda_context, qalert_request_repo: db.Repository):  # noqa: E501
     # clean qalert requests table
     with qalert_request_repo:
         qalert_request_repo.session.query(db.QAlertRequest).delete()

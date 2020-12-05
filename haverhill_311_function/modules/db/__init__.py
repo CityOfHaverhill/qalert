@@ -1,5 +1,5 @@
-from .exceptions import DBException
-from .models import QAlertAudit, QAlertRequest
+from .exceptions import DBException  # noqa: F401
+from .models import QAlertAudit, QAlertRequest  # noqa: F401
 from .repository import Repository
 
 

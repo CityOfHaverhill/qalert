@@ -61,7 +61,7 @@ def sanitize(qalert_data: dict) -> QAlertRequest:
         raise SanitizeException(exc)
 
 
-def sanitize_many(qalert_data: List[dict], ignore_exceptions=True) -> List[QAlertRequest]:
+def sanitize_many(qalert_data: List[dict], ignore_exceptions=True) -> List[QAlertRequest]:  # noqa: E501
     qalert_requests = []
     for qalert_request_data in qalert_data:
         try:
