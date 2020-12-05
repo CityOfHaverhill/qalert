@@ -20,11 +20,11 @@ def lambda_handler(event, context):
     context: object, required
         Lambda Context runtime methods and attributes
     """
-    # timeout run_pipeline function 20 seconds before the lambda is
+    # Timeout run_pipeline function 20 seconds before the lambda is
     # terminated so that we can do nessesary work cleanup before lambda
     # gets terminated
     pipeline_timeout = get_lambda_timeout(context) - 20
-    print("Pipeline will timeout in: ", pipeline_timeout)
+    # Run the pipeline to retreive QAlert data and store in database
     run_pipeline(timeout=pipeline_timeout)
 
 
