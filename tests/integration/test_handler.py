@@ -1,37 +1,47 @@
 from haverhill_311_function import app
+from haverhill_311_function.modules import settings
 from haverhill_311_function.modules import db
 
 import pytest
 
 
 @pytest.fixture()
-def scheduler_event():
+def lambda_event():
     """ Generates An Event"""
-    return {"body": 'Scheduled event!'}
+    return {}
+
+@pytest.fixture()
+def lambda_context():
+    """Generates An Context"""
+    class Context:
+        @staticmethod
+        def get_remaining_time_in_millis():
+            return 200000
+    
+    return Context()
 
 
 @pytest.fixture
-def qalert_db():
-    return db.QAlertDB(
-        host='localhost',
-        port=5432,
-        user='docker',
-        password='docker',
-        database='qalert_test'
-    )
+def qalert_request_repo():
+    settings.DB_HOST = 'localhost'
+    settings.DB_PORT = 5432
+    settings.DB_USER = 'docker'
+    settings.DB_PASSWORD = 'docker'
+    settings.DB_DATABASE = 'qalert_test' 
+    
+    return db.create_repo(db.QAlertRequest)
 
 
-def test_lambda_handler(scheduler_event, qalert_db):
+def test_lambda_handler(lambda_event, lambda_context, qalert_request_repo: db.Repository):
     # clean qalert requests table
-    with qalert_db:
-        qalert_db.session.query(db.QAlertRequest).delete()
-        qalert_db.session.commit()
+    with qalert_request_repo:
+        qalert_request_repo.session.query(db.QAlertRequest).delete()
+        qalert_request_repo.commit()
 
     # invoke lambda function
-    app.lambda_handler(scheduler_event, "")
+    app.lambda_handler(lambda_event, lambda_context)
 
     # get all qalert request records
-    with qalert_db:
-        qalert_requests = qalert_db.find_by_props(prop_dict={})
-
+    with qalert_request_repo:
+        qalert_requests = qalert_request_repo.find_by(prop_dict={})
     assert len(qalert_requests) == 5000
