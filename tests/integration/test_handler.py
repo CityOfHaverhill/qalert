@@ -21,10 +21,25 @@ def qalert_db():
     )
 
 
-def test_lambda_handler(scheduler_event, qalert_db):
+@pytest.fixture
+def audit_db():
+    return db.QAlertAuditDB(
+        host='localhost',
+        port=5432,
+        user='docker',
+        password='docker',
+        database='qalert_test'
+    )
+
+
+def test_lambda_handler(scheduler_event, qalert_db, audit_db):
     # clean qalert requests table
     with qalert_db:
         qalert_db.session.query(db.QAlertRequest).delete()
+        qalert_db.session.commit()
+
+    with audit_db:
+        qalert_db.session.query(db.QAlertAudit).delete()
         qalert_db.session.commit()
 
     # invoke lambda function

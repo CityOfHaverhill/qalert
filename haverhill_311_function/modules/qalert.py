@@ -15,20 +15,22 @@ def pull():
 
     data = []
     if settings.TEST:
-        url = settings.QALERT_REQUEST_ENDPOINT_TEST
+        endpoint = settings.QALERT_REQUEST_ENDPOINT_TEST
     else:
-        url = "{endpoint}?key={api_key}&count={count}&sort={sort}".format(
-            endpoint=settings.QALERT_REQUEST_ENDPOINT,
-            api_key=settings.QALERT_API_KEY,
-            count=-1,
-            sort="[createdate] asc,"
-        )
+        endpoint = settings.QALERT_REQUEST_ENDPOINT
 
-        with db.QAlertAuditDB() as audit_db:
-            latest_request = audit_db.get_latest_request()
+    url = "{endpoint}?key={api_key}&count={count}&sort={sort}".format(
+        endpoint=endpoint,
+        api_key=settings.QALERT_API_KEY,
+        count=-1,
+        sort="[createdate] asc,"
+    )
 
-        if latest_request is not None:
-            url += f"&createDateMin={latest_request.create_date}"
+    with db.QAlertAuditDB() as audit_db:
+        latest_request = audit_db.get_latest_request()
+
+    if latest_request is not None:
+        url += f"&createDateMin={latest_request.create_date}"
 
     payload = {}
     headers = {'User-Agent': 'Custom'}

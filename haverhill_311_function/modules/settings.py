@@ -12,7 +12,7 @@ QALERT_REQUEST_ENDPOINT = os.environ.get(
 )
 QALERT_REQUEST_ENDPOINT_TEST = os.environ.get(
     "QALERT_REQUEST_ENDPOINT_TEST",
-    default="https://qalert-data.s3.us-east-2.amazonaws.com/requests_get.json"
+    default="http://localhost:8001/api/requests/get"
 )
 QALERT_API_KEY = os.environ.get(
     "QALERT_API_KEY",

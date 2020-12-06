@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - haverhill-qalert
+  qalert:
+    build:
+      context: ../mock_qalert
+      dockerfile: ./Dockerfile
+    ports:
+      - "8001:80"
+    networks:
+      - haverhill-qalert
+networks:
+  haverhill-qalert:
+    name: haverhill_qalert_network

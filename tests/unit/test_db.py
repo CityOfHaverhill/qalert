@@ -37,7 +37,7 @@ def test_save(qalert_db):
     with qalert_db:
         qalert_db.save(qalert_request)
         saved_qalert_request = qalert_db.get(request_id=1)
-        assert saved_qalert_request == qalert_request
+        assert saved_qalert_request.id == qalert_request.id
 
 
 def test_save_many(qalert_db):
