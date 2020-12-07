@@ -2,7 +2,7 @@
 from io import BytesIO
 
 from . import settings
-from .db import create_repo, QAlertAudit
+from . import db
 
 import requests
 import ijson
@@ -15,20 +15,22 @@ def pull():
 
     data = []
     if settings.TEST:
-        url = settings.QALERT_REQUEST_ENDPOINT_TEST
+        endpoint = settings.QALERT_REQUEST_ENDPOINT_TEST
     else:
-        url = "{endpoint}?key={api_key}&count={count}&sort={sort}".format(
-            endpoint=settings.QALERT_REQUEST_ENDPOINT,
-            api_key=settings.QALERT_API_KEY,
-            count=-1,
-            sort="[createdate] asc,"
-        )
+        endpoint = settings.QALERT_REQUEST_ENDPOINT
 
-        with create_repo(entity_model=QAlertAudit) as audit_repo:
-            latest_request_saved = audit_repo.get_latest()
+    url = "{endpoint}?key={api_key}&count={count}&sort={sort}".format(
+        endpoint=endpoint,
+        api_key=settings.QALERT_API_KEY,
+        count=-1,
+        sort="[createdate] asc,"
+    )
 
-        if latest_request_saved is not None:
-            url += f"&createDateMin={latest_request_saved.create_date}"
+    with db.create_repo(entity_model=db.QAlertAudit) as audit_repo:
+        latest_request_saved = audit_repo.get_latest()
+
+    if latest_request_saved is not None:
+        url += f"&createDateMin={latest_request_saved.create_date}"
 
     payload = {}
     headers = {'User-Agent': 'Custom'}

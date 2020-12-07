@@ -33,11 +33,30 @@ def qalert_request_repo():
     return db.create_repo(db.QAlertRequest)
 
 
-def test_lambda_handler(lambda_event, lambda_context, qalert_request_repo: db.Repository):  # noqa: E501
+@pytest.fixture
+def qalert_audit_repo():
+    settings.DB_HOST = 'localhost'
+    settings.DB_PORT = 5432
+    settings.DB_USER = 'docker'
+    settings.DB_PASSWORD = 'docker'
+    settings.DB_DATABASE = 'qalert_test'
+
+    return db.create_repo(db.QAlertAudit)
+
+
+def test_lambda_handler(
+        lambda_event,
+        lambda_context,
+        qalert_request_repo: db.Repository,
+        qalert_audit_repo: db.Repository):
     # clean qalert requests table
     with qalert_request_repo:
         qalert_request_repo.session.query(db.QAlertRequest).delete()
         qalert_request_repo.commit()
+
+    with qalert_audit_repo:
+        qalert_audit_repo.session.query(db.QAlertAudit).delete()
+        qalert_audit_repo.session.commit()
 
     # invoke lambda function
     app.lambda_handler(lambda_event, lambda_context)
