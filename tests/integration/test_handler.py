@@ -43,12 +43,12 @@ def qalert_audit_repo():
 
     return db.create_repo(db.QAlertAudit)
 
+
 def test_lambda_handler(
         lambda_event,
         lambda_context,
         qalert_request_repo: db.Repository,
-        qalert_audit_repo: db.Repository
-    ):
+        qalert_audit_repo: db.Repository):
     # clean qalert requests table
     with qalert_request_repo:
         qalert_request_repo.session.query(db.QAlertRequest).delete()
