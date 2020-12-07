@@ -26,11 +26,11 @@ def pull():
         sort="[createdate] asc,"
     )
 
-    with db.QAlertAuditDB() as audit_db:
-        latest_request = audit_db.get_latest_request()
+    with db.create_repo(entity_model=db.QAlertAudit) as audit_repo:
+        latest_request_saved = audit_repo.get_latest()
 
-    if latest_request is not None:
-        url += f"&createDateMin={latest_request.create_date}"
+    if latest_request_saved is not None:
+        url += f"&createDateMin={latest_request_saved.create_date}"
 
     payload = {}
     headers = {'User-Agent': 'Custom'}
