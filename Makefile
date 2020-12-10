@@ -34,10 +34,10 @@ run-function: start-local-services db-upgrade
 	sam build --use-container
 	sam local invoke --env-vars tests/local_config.json --docker-network haverhill_qalert_network
 
-unit-tests: start-local-services
+unit-tests: start-local-services db-upgrade
 	pytest tests/unit
 
-integration-tests: start-local-services
+integration-tests: start-local-services db-upgrade
 	pytest tests/integration
 
 lint:
