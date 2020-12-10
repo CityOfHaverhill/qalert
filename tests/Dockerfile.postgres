@@ -2,4 +2,3 @@ FROM postgis/postgis:11-2.5
 ENV POSTGRES_USER docker
 ENV POSTGRES_PASSWORD docker
 ENV POSTGRES_DB qalert_test
-COPY init.sql /docker-entrypoint-initdb.d/init.sql
